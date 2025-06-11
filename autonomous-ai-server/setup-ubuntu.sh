@@ -58,11 +58,20 @@ print_success "npm installed: $NPM_VERSION"
 
 # Install additional dependencies for Puppeteer
 print_status "Installing Puppeteer dependencies..."
+
+# libasound2 was renamed to libasound2t64 starting with Ubuntu 24.04.
+# Check for the new package first and fall back to libasound2 on older systems.
+if apt-cache show libasound2t64 >/dev/null 2>&1; then
+    ALSA_PACKAGE="libasound2t64"
+else
+    ALSA_PACKAGE="libasound2"
+fi
+
 sudo apt install -y \
     ca-certificates \
     fonts-liberation \
     libappindicator3-1 \
-    libasound2 \
+    "$ALSA_PACKAGE" \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
     libc6 \

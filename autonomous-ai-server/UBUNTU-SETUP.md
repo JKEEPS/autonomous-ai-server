@@ -62,7 +62,10 @@ sudo apt install -y curl wget git build-essential
 
 # Puppeteer dependencies for browser automation
 sudo apt install -y \
-    ca-certificates fonts-liberation libappindicator3-1 libasound2 \
+    ca-certificates fonts-liberation libappindicator3-1 \
+    # libasound2t64 is used on Ubuntu 24.04. Older releases use libasound2.
+    \
+    $(apt-cache show libasound2t64 >/dev/null 2>&1 && echo libasound2t64 || echo libasound2) \
     libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 libcups2 \
     libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 \
     libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 \
