@@ -7,6 +7,9 @@ set -e  # Exit on any error
 
 echo "🚀 Setting up Autonomous AI MCP Server on Ubuntu..."
 
+# Determine the directory containing this script before any changes
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -122,8 +125,7 @@ fi
 mkdir -p "$PROJECT_DIR"
 cd "$PROJECT_DIR"
 
-# Copy project files (assuming this script is run from the project directory)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Copy project files from the original script location
 print_status "Copying project files from $SCRIPT_DIR..."
 
 # Copy all necessary files
