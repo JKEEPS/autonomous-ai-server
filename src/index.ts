@@ -3751,7 +3751,7 @@ class AutonomousAIServer {
       $('script, style, noscript').remove();
       
       // Get text content and clean it up
-      const textContent = $.text()
+      const textContent = $.root().text()
         .replace(/\s+/g, ' ') // Replace multiple whitespace with single space
         .replace(/\n\s*\n/g, '\n') // Replace multiple newlines with single newline
         .trim();
