@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "autonomous-ai": {
+      "command": "node",
+      "args": ["/path/to/autonomous-ai-server/build/index.js"],
+      "env": {
+        "WORKING_DIRECTORY": "/path/to/your/project",
+        "NODE_ENV": "production"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

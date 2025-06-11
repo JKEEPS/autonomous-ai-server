@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  autonomous-ai-server:
+    build: .
+    container_name: autonomous-ai-mcp-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - WORKING_DIRECTORY=/app/workspace
+    volumes:
+      - ./workspace:/app/workspace
+      - ./data:/app/data
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Server is healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  workspace:
+  data:
