@@ -88,7 +88,7 @@ export class WebTools extends BaseTool {
         timeout: 30000,
       });
       
-      const $ = cheerio.load(response.data);
+      const $ = cheerio.load(response.data) as cheerio.CheerioAPI;
       $('script, style, noscript').remove();
       
       const textContent = $.text()
@@ -152,7 +152,7 @@ export class WebTools extends BaseTool {
     
     try {
       const result = await lighthouse(url, {
-        port: new URL(browser.wsEndpoint()).port,
+        port: parseInt(new URL(browser.wsEndpoint()).port, 10),
         output: 'json',
         onlyCategories: categories,
       });
@@ -246,14 +246,14 @@ export class WebTools extends BaseTool {
         
         analysis.elementCount = root.querySelectorAll('*').length;
         
-        root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+        root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading: Element) => {
           analysis.headings.push({
             tag: heading.tagName.toLowerCase(),
             text: heading.textContent?.trim().substring(0, 100),
           });
         });
         
-        root.querySelectorAll('img').forEach((img) => {
+        root.querySelectorAll('img').forEach((img: HTMLImageElement) => {
           analysis.images.push({
             src: img.src,
             alt: img.alt,
@@ -261,7 +261,7 @@ export class WebTools extends BaseTool {
           });
         });
         
-        root.querySelectorAll('a[href]').forEach((link) => {
+        root.querySelectorAll('a[href]').forEach((link: HTMLAnchorElement) => {
           analysis.links.push({
             href: link.getAttribute('href'),
             text: link.textContent?.trim().substring(0, 50),
@@ -269,7 +269,7 @@ export class WebTools extends BaseTool {
           });
         });
         
-        root.querySelectorAll('form').forEach((form) => {
+        root.querySelectorAll('form').forEach((form: HTMLFormElement) => {
           analysis.forms.push({
             action: form.action,
             method: form.method,
@@ -277,7 +277,7 @@ export class WebTools extends BaseTool {
           });
         });
         
-        root.querySelectorAll('script').forEach((script) => {
+        root.querySelectorAll('script').forEach((script: HTMLScriptElement) => {
           analysis.scripts.push({
             src: script.src,
             inline: !script.src,
@@ -323,7 +323,7 @@ export class WebTools extends BaseTool {
       });
       
       await page.goto(url, { waitUntil: 'networkidle2' });
-      await page.waitForTimeout(2000);
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       const result = {
         url,

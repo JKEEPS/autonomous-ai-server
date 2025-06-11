@@ -2232,7 +2232,7 @@ class AutonomousAIServer {
     
     try {
       const result = await lighthouse(url, {
-        port: new URL(browser.wsEndpoint()).port,
+        port: parseInt(new URL(browser.wsEndpoint()).port, 10),
         output: 'json',
         onlyCategories: categories,
       });
@@ -2652,7 +2652,7 @@ class AutonomousAIServer {
       await page.goto(url, { waitUntil: 'networkidle2' });
       
       // Wait a bit to capture any delayed console logs
-      await page.waitForTimeout(2000);
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       const result = {
         url,
@@ -2744,7 +2744,7 @@ class AutonomousAIServer {
         analysis.elementCount = root.querySelectorAll('*').length;
         
         // Analyze headings
-        root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading) => {
+        root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading: Element) => {
           analysis.headings.push({
             tag: heading.tagName.toLowerCase(),
             text: heading.textContent?.trim().substring(0, 100),
@@ -2752,7 +2752,7 @@ class AutonomousAIServer {
         });
         
         // Analyze images
-        root.querySelectorAll('img').forEach((img) => {
+        root.querySelectorAll('img').forEach((img: HTMLImageElement) => {
           analysis.images.push({
             src: img.src,
             alt: img.alt,
@@ -2761,7 +2761,7 @@ class AutonomousAIServer {
         });
         
         // Analyze links
-        root.querySelectorAll('a[href]').forEach((link) => {
+        root.querySelectorAll('a[href]').forEach((link: HTMLAnchorElement) => {
           analysis.links.push({
             href: link.getAttribute('href'),
             text: link.textContent?.trim().substring(0, 50),
@@ -2770,7 +2770,7 @@ class AutonomousAIServer {
         });
         
         // Analyze forms
-        root.querySelectorAll('form').forEach((form) => {
+        root.querySelectorAll('form').forEach((form: HTMLFormElement) => {
           analysis.forms.push({
             action: form.action,
             method: form.method,
@@ -2779,7 +2779,7 @@ class AutonomousAIServer {
         });
         
         // Analyze scripts
-        root.querySelectorAll('script').forEach((script) => {
+        root.querySelectorAll('script').forEach((script: HTMLScriptElement) => {
           analysis.scripts.push({
             src: script.src,
             inline: !script.src,
@@ -3745,7 +3745,7 @@ class AutonomousAIServer {
       });
       
       // Extract text content using Cheerio (removes HTML tags, scripts, styles)
-      const $ = cheerio.load(response.data);
+      const $ = cheerio.load(response.data) as cheerio.CheerioAPI;
       
       // Remove script and style elements
       $('script, style, noscript').remove();
@@ -4409,7 +4409,7 @@ class AutonomousAIServer {
           continue;
         }
         
-        const entityRelations = this.entityRelations.get(from);
+        const entityRelations = this.entityRelations.get(from)!;
         const relationIndex = entityRelations.findIndex(
           rel => rel.to === to && rel.relationType === relationType
         );
@@ -4678,7 +4678,10 @@ class AutonomousAIServer {
 
   private async handleCreateSubAgent(args: any) {
     try {
-      const result = await this.multiAgentOrchestrator.createSubAgent(args);
+      const result = await this.multiAgentOrchestrator.createSubAgent(
+        args.parentAgentId,
+        args
+      );
       
       // Store in context memory
       await this.handleStoreContext({
@@ -4856,7 +4859,7 @@ class AutonomousAIServer {
 
   private async handleListAgents(args: any) {
     try {
-      const result = await this.multiAgentOrchestrator.listAgents();
+      const result = this.multiAgentOrchestrator.getAllAgents();
       
       return {
         content: [
@@ -4881,7 +4884,14 @@ class AutonomousAIServer {
 
   private async handleListTasks(args: any) {
     try {
-      const result = await this.multiAgentOrchestrator.listTasks(args.status, args.agentId);
+      let tasks = this.multiAgentOrchestrator.getAllTasks();
+      if (args.status) {
+        tasks = tasks.filter((t: any) => t.status === args.status);
+      }
+      if (args.agentId) {
+        tasks = tasks.filter((t: any) => t.assignedAgentId === args.agentId);
+      }
+      const result = tasks;
       
       return {
         content: [
@@ -4938,7 +4948,7 @@ class AutonomousAIServer {
 
   private async handleStartOrchestrator(args: any) {
     try {
-      const result = await this.multiAgentOrchestrator.start();
+      const result = await this.multiAgentOrchestrator.startOrchestrator();
       
       // Store in context memory
       await this.handleStoreContext({
@@ -4970,7 +4980,7 @@ class AutonomousAIServer {
 
   private async handleStopOrchestrator(args: any) {
     try {
-      const result = await this.multiAgentOrchestrator.stop();
+      const result = await this.multiAgentOrchestrator.stopOrchestrator();
       
       // Store in context memory
       await this.handleStoreContext({
