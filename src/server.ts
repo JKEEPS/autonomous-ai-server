@@ -43,7 +43,7 @@ export class AutonomousAIServer {
     });
 
     // Execute tool calls
-    this.server.setRequestHandler(CallToolRequestSchema, async (request, _extra) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request, _extra: unknown): Promise<any> => {
       const { name, arguments: args } = request.params;
 
       try {
@@ -59,18 +59,18 @@ export class AutonomousAIServer {
     });
 
     // List available resources
-    this.server.setRequestHandler('resources/list' as any, async () => {
+    this.server.setRequestHandler('resources/list' as any, async (): Promise<any> => {
       return this.resourceManager.listResources();
     });
 
     // Read resource content
-    this.server.setRequestHandler('resources/read' as any, async (request: any) => {
+    this.server.setRequestHandler('resources/read' as any, async (request: any): Promise<any> => {
       const { uri } = request.params;
       return this.resourceManager.readResource(uri);
     });
 
     // Error handling
-    this.server.onerror = (error) => {
+    this.server.onerror = (error: unknown) => {
       console.error('[MCP Error]', error);
     };
 

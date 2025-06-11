@@ -91,7 +91,7 @@ export class WebTools extends BaseTool {
       const $ = cheerio.load(response.data) as cheerio.CheerioAPI;
       $('script, style, noscript').remove();
       
-      const textContent = $.text()
+      const textContent = $.root().text()
         .replace(/\s+/g, ' ')
         .replace(/\n\s*\n/g, '\n')
         .trim();
@@ -261,11 +261,11 @@ export class WebTools extends BaseTool {
           });
         });
         
-        root.querySelectorAll('a[href]').forEach((link: HTMLAnchorElement) => {
+        (root.querySelectorAll('a[href]') as NodeListOf<HTMLAnchorElement>).forEach((anchor) => {
           analysis.links.push({
-            href: link.getAttribute('href'),
-            text: link.textContent?.trim().substring(0, 50),
-            isExternal: link.getAttribute('href')?.startsWith('http'),
+            href: anchor.getAttribute('href'),
+            text: anchor.textContent?.trim().substring(0, 50),
+            isExternal: anchor.getAttribute('href')?.startsWith('http'),
           });
         });
         
