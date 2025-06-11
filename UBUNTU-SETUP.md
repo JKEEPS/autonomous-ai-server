@@ -86,6 +86,11 @@ cd ~/autonomous-ai-server
 # Then install dependencies
 npm install
 
+> **Note**: During installation you may see `npm WARN deprecated` messages for
+> some nested packages (e.g. `glob@7` or `inflight`). These come from the
+> dependency tree of third‑party packages and do not affect the functionality
+> of the server. They can safely be ignored.
+
 # Build the project
 npm run build
 ```
