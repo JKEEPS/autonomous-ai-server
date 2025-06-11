@@ -433,4 +433,22 @@ export class ResourceManager {
   public getThresholds() {
     return { ...this.resourceThresholds };
   }
+
+  // Simple resource listing for server.ts
+  public async listResources(): Promise<string[]> {
+    try {
+      const entries = await fs.readdir(this.workingDirectory);
+      return entries;
+    } catch {
+      return [];
+    }
+  }
+
+  public async readResource(uri: string): Promise<string> {
+    const resolved = path.join(this.workingDirectory, uri);
+    if (!resolved.startsWith(this.workingDirectory)) {
+      throw new Error('Invalid resource path');
+    }
+    return fs.readFile(resolved, 'utf-8');
+  }
 }

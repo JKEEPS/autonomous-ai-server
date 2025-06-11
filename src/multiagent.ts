@@ -252,10 +252,11 @@ ${subAgentConfig.systemPrompt || ''}`;
 
     // Auto-assign if no agent specified
     if (!agentId) {
-      agentId = await this.findBestAgent(task);
-      if (!agentId) {
+      const bestAgentId = await this.findBestAgent(task);
+      if (!bestAgentId) {
         throw new Error('No suitable agent found for task');
       }
+      agentId = bestAgentId;
     }
 
     const agentState = this.agentStates.get(agentId);

@@ -43,7 +43,7 @@ export class AutonomousAIServer {
     });
 
     // Execute tool calls
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request, _extra) => {
       const { name, arguments: args } = request.params;
 
       try {
@@ -59,12 +59,12 @@ export class AutonomousAIServer {
     });
 
     // List available resources
-    this.server.setRequestHandler('resources/list', async () => {
+    this.server.setRequestHandler('resources/list' as any, async () => {
       return this.resourceManager.listResources();
     });
 
     // Read resource content
-    this.server.setRequestHandler('resources/read', async (request) => {
+    this.server.setRequestHandler('resources/read' as any, async (request: any) => {
       const { uri } = request.params;
       return this.resourceManager.readResource(uri);
     });
